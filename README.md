@@ -1,5 +1,6 @@
 # Custom-JWT-Token-Issuer
 
+Buid the source and copy the 'CustomTokenIssuer-1.0-SNAPSHOT.jar' file to the '<APIM_HOME>/repository/components/lib' directory.
 Add the below configurations to '<APIM_HOME>/repository/conf/deployment.toml' file.
 
 ```
