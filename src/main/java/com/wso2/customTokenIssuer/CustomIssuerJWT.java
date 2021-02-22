@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.apimgt.api.APIManagementException;
 import org.wso2.carbon.apimgt.api.model.Application;
+import org.wso2.carbon.apimgt.impl.dao.ApiMgtDAO;
 import org.wso2.carbon.apimgt.impl.dto.ApplicationDTO;
 import org.wso2.carbon.apimgt.impl.dto.JwtTokenInfoDTO;
 import org.wso2.carbon.apimgt.impl.utils.APIUtil;
@@ -42,6 +43,8 @@ public class CustomIssuerJWT extends JWTTokenIssuer {
         try {
             Application application =
                     APIUtil.getApplicationByClientId(request.getOauth2AccessTokenReqDTO().getClientId());
+            ApiMgtDAO apiMgtDAO = ApiMgtDAO.getInstance();
+            Application applicationAttr = apiMgtDAO.getApplicationById(application.getId());
             jwtTokenInfoDTO =
                     APIUtil.getJwtTokenInfoDTO(application, userName, MultitenantUtils.getTenantDomain(userName));
             ApplicationDTO applicationDTO = new ApplicationDTO();
@@ -57,6 +60,7 @@ public class CustomIssuerJWT extends JWTTokenIssuer {
             jwtClaimsSetBuilder.claim("keytype", application.getKeyType());
             jwtClaimsSetBuilder.claim("subscribedAPIs", jwtTokenInfoDTO.getSubscribedApiDTOList());
             jwtClaimsSetBuilder.claim("consumerKey",jwtClaimsSet.getClaim("azp"));
+            jwtClaimsSetBuilder.claim("ApplicationAttributes", applicationAttr.getApplicationAttributes());
 
         } catch (APIManagementException e) {
             throw new IdentityOAuth2Exception("Error while generating Custom JWT", e);
